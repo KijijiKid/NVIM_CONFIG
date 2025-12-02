@@ -83,7 +83,3 @@ Includes full file operations: create, delete, rename, cut, copy, paste.
 Powered by `telescope.nvim` + `plenary.nvim`.
 
 ---
-
-## ⌨️ Keybinding Summary
-
-### Leader Key
