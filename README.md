@@ -1,44 +1,89 @@
-🚀 Minimal Fast Neovim Configuration
-This repository contains a minimal, fast, and modern Neovim setup focused on:
-⚡ Speed
-🎨 Beautiful UI
-🌳 Treesitter-based syntax highlighting
-🧠 LSP + Autocompletion
-📁 Easy file navigation (NvimTree)
-🔍 Search & fuzzy finding (Telescope)
-Everything is configured through lazy.nvim, providing clean plugin management and fast startup times.
-✨ Features
-🔧 General Editing Enhancements
-Relative & absolute line numbers
-Smart indentation
-Highlighted cursor line
-List mode with visible whitespace (tabs → ->, spaces → ., trailing → .)
-ESC shortcut: press jk in insert mode
-Arrow keys disabled (encourages hjkl navigation)
-🎨 UI & Colors
-Tokyonight colorscheme (no lazy-loading → loads instantly)
-🌳 Treesitter
-Faster, more accurate syntax highlighting
-Auto-indentation
-Ensures essential language parsers are installed (Lua, Python, C, C++, Go, Rust, TS, HTML, CSS, JSON…)
-🧠 LSP + Autocompletion
-clangd LSP preconfigured (C/C++)
-Completion via:
-nvim-cmp
-Snippets with LuaSnip + friendly-snippets
-<Tab> / <S-Tab> snippet navigation
-<CR> to confirm selections
-📁 File Explorer (NvimTree)
-Custom keybindings:
-Action	Key
-Open file	l
-Close directory	h
-Horizontal split	s
-Vertical split	v
-New tab	t
-Refresh	R
-Toggle tree	<leader>e
-Includes full file operations: create, delete, rename, copy, paste, etc.
-🔍 Telescope Integration
-<leader>f → Find files
-<leader>g → Live grep
+# 🌙 Minimal & Fast Neovim Configuration  
+A lightweight Neovim setup focused on **speed**, **clean UI**, **Treesitter**, **LSP**, and **modern editing comfort** — powered by **lazy.nvim**.
+
+---
+
+## ✨ Features Overview
+
+### 🔧 Editor Enhancements
+- Hybrid line numbers  
+- Smart indentation & tab control  
+- Cursorline enabled  
+- Visible whitespace (tabs `->`, spaces `.`, trailing `.`)  
+- `jk` → fast escape  
+- Arrow keys disabled (train your hjkl!)
+
+---
+
+## 🎨 UI & Colors
+- **Tokyonight** colorscheme (loaded instantly, no lazy-loading)  
+- True color support enabled
+
+---
+
+## 🌳 Treesitter
+Powered by `nvim-treesitter`:
+
+- Fast, accurate syntax highlighting  
+- Automatic indentation  
+- Automatic parser installation for:  
+  `lua`, `python`, `javascript`, `typescript`,  
+  `bash`, `json`, `html`, `css`,  
+  `c`, `cpp`, `go`, `rust`
+
+---
+
+## 🧠 LSP + Autocompletion
+
+### LSP
+- Preconfigured **clangd** (C & C++)  
+- Enhanced LSP capabilities via `cmp_nvim_lsp`
+
+### Completion (nvim-cmp)
+- Snippets with **LuaSnip**  
+- `<Tab>` / `<S-Tab>` to navigate items or jump through snippets  
+- `<CR>` to confirm selections  
+- Completion sources:
+  - LSP  
+  - Snippets  
+  - Buffer  
+  - Path  
+
+---
+
+## 📁 File Explorer (NvimTree)
+
+Custom fast navigation inspired by netrw:
+
+| Action | Key |
+|--------|-----|
+| Open file | `l` |
+| Close parent directory | `h` |
+| Open horizontal split | `s` |
+| Open vertical split | `v` |
+| Open in new tab | `t` |
+| Reload | `R` |
+| Toggle hidden files | `H` |
+| Toggle `.gitignore` filter | `I` |
+| Expand all | `E` |
+| Collapse all | `W` |
+| Toggle tree | `<leader>e` |
+
+Includes full file operations: create, delete, rename, cut, copy, paste.
+
+---
+
+## 🔍 Telescope (Fuzzy Finder)
+
+| Action | Key |
+|--------|-----|
+| Search files | `<leader>f` |
+| Live grep | `<leader>g` |
+
+Powered by `telescope.nvim` + `plenary.nvim`.
+
+---
+
+## ⌨️ Keybinding Summary
+
+### Leader Key
