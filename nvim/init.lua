@@ -1,4 +1,6 @@
--- Minimal, fast Neovim config focused on speed and code highlighting
+-----------------------------------------------------------
+-- Minimal, fast Neovim config focused on speed and highlighting
+-----------------------------------------------------------
 
 -----------------------------------------------------------
 -- Bootstrapping lazy.nvim
@@ -21,10 +23,13 @@ vim.opt.rtp:prepend(lazypath)
 -----------------------------------------------------------
 vim.o.number = true
 vim.o.relativenumber = true
+
+-- tabs / spaces
 vim.o.expandtab = true
 vim.o.shiftwidth = 2
 vim.o.tabstop = 4
-vim.opt.expandtab = false
+vim.opt.expandtab = false      -- <- pick true/false here as you prefer
+
 vim.o.smartindent = true
 vim.o.termguicolors = true
 vim.o.updatetime = 200
@@ -33,12 +38,13 @@ vim.o.cursorline = true
 -- Set tab width (optional)
 vim.opt.tabstop = 4       -- how wide a real tab looks
 vim.opt.shiftwidth = 4    -- how many columns >> indents
-vim.opt.softtabstop = 4   -- how TAB acts in insert mode
+vim.opt.softtabstop = 4   -- how <Tab> acts in insert mode
 
+-- Leader
 vim.keymap.set('n', '<Space>', '<Nop>', { silent = true })
 vim.g.mapleader = ' '
 
--- Disable Arrow Keys
+-- Disable arrow keys in normal mode
 vim.keymap.set('n', '<Up>', '<Nop>')
 vim.keymap.set('n', '<Down>', '<Nop>')
 vim.keymap.set('n', '<Left>', '<Nop>')
@@ -50,19 +56,37 @@ vim.keymap.set('i', '<Down>', '<Nop>')
 vim.keymap.set('i', '<Left>', '<Nop>')
 vim.keymap.set('i', '<Right>', '<Nop>')
 
--- ESC Shortcut
-vim.keymap.set("i", "jk", "<Esc>")
+-- ESC shortcut
+vim.keymap.set('i', 'jk', '<Esc>')
 
 -- Enable list mode
 vim.opt.list = true
 
 -- Define characters
 vim.opt.listchars = {
-    tab = "->",
-    space = ".",
-    trail = "."
+  tab = "->",
+  space = ".",
+  trail = ".",
 }
 
+-----------------------------------------------------------
+-- Diagnostic inline errors (PUT IT HERE)
+-----------------------------------------------------------
+vim.diagnostic.config({
+  virtual_text = {
+    prefix = "●",
+    spacing = 2,
+  },
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+})
+
+--Error MSG Customization
+vim.api.nvim_set_hl(0, "DiagnosticVirtualTextError", { fg = "#ff6c6b", bg = "NONE", italic = true })
+vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn",  { fg = "#ECBE7B", bg = "NONE", italic = true })
+vim.api.nvim_set_hl(0, "DiagnosticVirtualTextInfo",  { fg = "#51afef", bg = "NONE", italic = true })
+vim.api.nvim_set_hl(0, "DiagnosticVirtualTextHint",  { fg = "#98be65", bg = "NONE", italic = true })
 
 -----------------------------------------------------------
 -- Plugins
@@ -93,10 +117,19 @@ require('lazy').setup({
         indent = { enable = true },
         ensure_installed = {
           'lua', 'python', 'javascript', 'typescript', 'bash', 'json',
-          'html', 'css', 'c', 'cpp', 'go', 'rust'
-        }
+          'html', 'css', 'c', 'cpp', 'go', 'rust','make',
+        },
       })
     end,
+  },
+
+  -----------------------------------------------------------
+  -- Oil (file explorer)
+  -----------------------------------------------------------
+  {
+    "stevearc/oil.nvim",
+    opts = {},
+    dependencies = { "nvim-tree/nvim-web-devicons" },
   },
 
   -----------------------------------------------------------
@@ -137,6 +170,7 @@ require('lazy').setup({
           ['<CR>'] = cmp.mapping.confirm({ select = true }),
 
           ['<Tab>'] = cmp.mapping(function(fallback)
+
             if cmp.visible() then
               cmp.select_next_item()
             elseif luasnip.expand_or_locally_jumpable() then
@@ -170,23 +204,29 @@ require('lazy').setup({
       -------------------------------------------------------
       local lspconfig = require('lspconfig')
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
+	  vim.lsp.inlay_hint.enable(true)
 
-      -- Install C/C++ only (clangd)
+      -- C/C++ via clangd
       lspconfig.clangd.setup({
         capabilities = capabilities,
+		cmd = {
+				"clangd",
+				"--background-index",
+				 "--completion-style=detailed",
+				 "--header-insertion=never",
+				}
       })
     end,
   },
 
   -----------------------------------------------------------
-  -- File explorer (NvimTree)
+  -- File explorer (nvim-tree)
   -----------------------------------------------------------
   {
     'nvim-tree/nvim-tree.lua',
     dependencies = 'nvim-tree/nvim-web-devicons',
 
     config = function()
-
       local function my_on_attach(bufnr)
         local api = require('nvim-tree.api')
 
@@ -204,47 +244,47 @@ require('lazy').setup({
         end
 
         -----------------------------------------------------------
-        -- Navigation (netrw style)
+        -- Navigation (netrw-style)
         -----------------------------------------------------------
-        vim.keymap.set('n', 'l', api.node.open.edit, opts('Open'))
-        vim.keymap.set('n', 'h', api.node.navigate.parent_close, opts('Close Directory'))
-        vim.keymap.set('n', 'L', api.node.open.no_window_picker, opts('Open Without Picker'))
+        vim.keymap.set('n', 'L', api.node.open.edit, opts('Open'))
+        vim.keymap.set('n', 'H', api.node.navigate.parent_close, opts('Close directory'))
+        vim.keymap.set('n', 'l', api.node.open.no_window_picker, opts('Open without picker'))
 
         -----------------------------------------------------------
         -- Splits & tabs
         -----------------------------------------------------------
-        vim.keymap.set('n', 's', api.node.open.horizontal, opts('Horizontal Split'))
-        vim.keymap.set('n', 'v', api.node.open.vertical,   opts('Vertical Split'))
-        vim.keymap.set('n', 't', api.node.open.tab,        opts('Open in New Tab'))
-        vim.keymap.set('n', 'p', api.node.open.preview,    opts('Preview'))
+        vim.keymap.set('n', 'S', api.node.open.horizontal, opts('Horizontal split'))
+        vim.keymap.set('n', 'V', api.node.open.vertical,   opts('Vertical split'))
+        vim.keymap.set('n', 'T', api.node.open.tab,        opts('Open in new tab'))
+        vim.keymap.set('n', 'P', api.node.open.preview,    opts('Preview'))
 
         -----------------------------------------------------------
         -- File ops
         -----------------------------------------------------------
-        vim.keymap.set('n', 'a', api.fs.create, opts('Create'))
-        vim.keymap.set('n', 'd', api.fs.remove, opts('Delete'))
-        vim.keymap.set('n', 'r', api.fs.rename, opts('Rename'))
-        vim.keymap.set('n', 'x', api.fs.cut, opts('Cut'))
-        vim.keymap.set('n', 'c', api.fs.copy.node, opts('Copy'))
-        vim.keymap.set('n', 'p', api.fs.paste, opts('Paste'))
-        vim.keymap.set('n', 'y', api.fs.copy.filename, opts('Copy Name'))
-        vim.keymap.set('n', 'Y', api.fs.copy.relative_path, opts('Copy Relative Path'))
-        vim.keymap.set('n', 'gy', api.fs.copy.absolute_path, opts('Copy Absolute Path'))
+        vim.keymap.set('n', 'A', api.fs.create,           opts('Create'))
+        vim.keymap.set('n', 'D', api.fs.remove,           opts('Delete'))
+        vim.keymap.set('n', 'R', api.fs.rename,           opts('Rename'))
+        vim.keymap.set('n', 'X', api.fs.cut,              opts('Cut'))
+        vim.keymap.set('n', 'C', api.fs.copy.node,        opts('Copy'))
+        vim.keymap.set('n', 'P', api.fs.paste,            opts('Paste'))
+        vim.keymap.set('n', 'Y', api.fs.copy.filename,    opts('Copy name'))
+        vim.keymap.set('n', 'y', api.fs.copy.relative_path, opts('Copy relative path'))
+        vim.keymap.set('n', 'gY', api.fs.copy.absolute_path, opts('Copy absolute path'))
 
         -----------------------------------------------------------
         -- Tree actions
         -----------------------------------------------------------
-        vim.keymap.set('n', 'R', api.tree.reload, opts('Refresh'))
-        vim.keymap.set('n', 'H', api.tree.toggle_hidden_filter, opts('Toggle Hidden'))
-        vim.keymap.set('n', 'I', api.tree.toggle_gitignore_filter, opts('Toggle Gitignore'))
-        vim.keymap.set('n', 'E', api.tree.expand_all, opts('Expand All'))
-        vim.keymap.set('n', 'W', api.tree.collapse_all, opts('Collapse All'))
+        vim.keymap.set('n', 'r', api.tree.reload,                      opts('Refresh'))
+        vim.keymap.set('n', 'h', api.tree.toggle_hidden_filter,        opts('Toggle hidden'))
+        vim.keymap.set('n', 'i', api.tree.toggle_gitignore_filter,     opts('Toggle gitignore'))
+        vim.keymap.set('n', 'e', api.tree.expand_all,                  opts('Expand all'))
+        vim.keymap.set('n', 'w', api.tree.collapse_all,                opts('Collapse all'))
 
         -----------------------------------------------------------
         -- Misc
         -----------------------------------------------------------
         vim.keymap.set('n', '?', api.tree.toggle_help, opts('Help'))
-        vim.keymap.set('n', 'q', api.tree.close, opts('Close'))
+        vim.keymap.set('n', 'Q', api.tree.close,       opts('Close'))
       end
 
       require('nvim-tree').setup({
@@ -264,9 +304,46 @@ require('lazy').setup({
     tag = '0.1.4',
     dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
-      local telescope = require('telescope.builtin')
-      vim.keymap.set('n', '<leader>f', telescope.find_files)
-      vim.keymap.set('n', '<leader>g', telescope.live_grep)
+      local telescope_builtin = require('telescope.builtin')
+      vim.keymap.set('n', '<leader>f', telescope_builtin.find_files)
+      vim.keymap.set('n', '<leader>g', telescope_builtin.live_grep)
+    end,
+  },
+
+  -----------------------------------------------------------
+  -- Trouble (diagnostics / quickfix list)
+  -----------------------------------------------------------
+  {
+    "folke/trouble.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = {
+      use_diagnostic_signs = true, -- use builtin LSP signs
+    },
+    config = function(_, opts)
+      require("trouble").setup(opts)
+
+      -- Keymaps for Trouble
+      local trouble = require("trouble")
+
+      -- Toggle document diagnostics
+      vim.keymap.set("n", "<leader>xx", function()
+        trouble.toggle("diagnostics")
+      end, { desc = "Trouble: diagnostics (workspace)" })
+
+      -- Buffer-local diagnostics
+      vim.keymap.set("n", "<leader>xb", function()
+        trouble.toggle("diagnostics", { filter = { buf = 0 } })
+      end, { desc = "Trouble: diagnostics (buffer)" })
+
+      -- Quickfix
+      vim.keymap.set("n", "<leader>xq", function()
+        trouble.toggle("qflist")
+      end, { desc = "Trouble: quickfix list" })
+
+      -- LSP references (if you use them a lot)
+      vim.keymap.set("n", "<leader>xr", function()
+        trouble.toggle("lsp_references")
+      end, { desc = "Trouble: LSP references" })
     end,
   },
 
