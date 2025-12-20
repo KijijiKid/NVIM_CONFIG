@@ -56,6 +56,9 @@ vim.keymap.set('i', '<Down>', '<Nop>')
 vim.keymap.set('i', '<Left>', '<Nop>')
 vim.keymap.set('i', '<Right>', '<Nop>')
 
+--Disable swap buffer permanently
+vim.opt.swapfile = false
+
 -- ESC shortcut
 vim.keymap.set('i', 'jk', '<Esc>')
 
@@ -68,6 +71,12 @@ vim.opt.listchars = {
   space = ".",
   trail = ".",
 }
+
+-- Window movement on <leader> + h/j/k/l
+vim.keymap.set("n", "<leader>h", "<C-w>h", { silent = true })
+vim.keymap.set("n", "<leader>j", "<C-w>j", { silent = true })
+vim.keymap.set("n", "<leader>k", "<C-w>k", { silent = true })
+vim.keymap.set("n", "<leader>l", "<C-w>l", { silent = true })
 
 -----------------------------------------------------------
 -- Diagnostic inline errors (PUT IT HERE)
